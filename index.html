@@ -1,31 +1,66 @@
-<!DOCTYPE html>
-<!-- A placeholder from the Home Sales template. Replace this file with your site's first page. -->
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Under construction</title>
-  <!-- An empty icon, so the browser doesn't log an error looking for favicon.ico -->
-  <link rel="icon" href="data:,">
-  <style>
-    :root { color-scheme: light dark; }
-    body {
-      max-width: 40rem;
-      margin: 0 auto;
-      padding: 3rem 1rem;
-      font-family: system-ui, sans-serif;
-      line-height: 1.5;
-    }
-    footer { margin-top: 3rem; font-size: 0.875rem; opacity: 0.75; }
-  </style>
+  <meta name="description" content="Explore historical home sales around 11 US campuses. Compare cities, prices, and distance to campus using the College-town home sales dataset.">
+  <meta name="theme-color" content="#172b32">
+  <title>Campus Atlas | College-town home sales</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.mjs"></script>
 </head>
 <body>
-  <main>
-    <h1>This site is under construction</h1>
-    <p>It will show findings from the College-town home sales dataset.</p>
+  <a class="skip" href="#explore">Skip to the data</a>
+  <header class="site-header wrap">
+    <a class="brand" href="./" aria-label="Campus Atlas home"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M4 18 18 6l14 12M8 16v14h20V16M15 30V19h6v11"/></svg><span>Campus<span class="brand-light">Atlas</span><small>A FIELD GUIDE TO COLLEGE-TOWN HOMES</small></span></a>
+    <nav aria-label="Main navigation"><a href="#explore" class="nav-active">Explore</a><a href="#sales">Sales</a><a href="#methodology">About the data <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy"><p class="eyebrow"><span></span> THE COLLEGE-TOWN COLLECTION</p><h1 id="hero-title">A place to learn.<br>A place to call home.</h1><p>Explore the housing markets around America's campuses.<br class="desktop-break"> Follow the prices, compare the towns, and find the patterns.</p><a class="hero-link" href="#explore">Explore the data <span aria-hidden="true">↓</span></a></div>
+      <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit orbit-three"></div><svg viewBox="0 0 340 230"><path class="ground" d="M8 191h324M32 213h275"/><g class="buildings"><path d="M52 191V118l50-37 51 37v73M43 121l59-45 60 45M72 191v-42h24v42M114 143h19v20h-19zM87 111h25v19H87z"/><path d="M184 191V78h89v113M172 78h113l-57-25zM197 93h13v25h-13zM248 93h13v25h-13zM197 132h13v25h-13zM248 132h13v25h-13zM220 191v-29h18v29M214 53V24h29v29M210 24h37L229 5z"/><circle cx="229" cy="39" r="8"/><path d="M229 34v6h4M16 191v-32m0-35c-24 20-19 40 0 39 19 1 24-19 0-39M309 191v-32m0-35c-24 20-19 40 0 39 19 1 24-19 0-39"/></g></svg><span class="art-label">CLOSER TO CAMPUS. CLOSER TO THE DATA.</span></div>
+    </section>
+    <div class="collection-strip"><p><strong id="source-count">—</strong> recorded sales <span class="divider">/</span> <strong id="campus-count">—</strong> campuses <span class="divider">/</span> <strong id="city-count">—</strong> cities & towns</p><p>Collected March 2026 <span class="status-dot"></span> Historical data</p></div>
+    <section id="explore" class="explore" aria-labelledby="explore-title">
+      <div class="section-heading"><div><p class="eyebrow muted">01 / EXPLORE THE MARKET</p><h2 id="explore-title">Every town has a story.</h2></div><button id="illinois-button" class="button secondary" disabled>Start with Illinois <span aria-hidden="true">↗</span></button></div>
+      <form class="filters" id="filter-form" aria-label="Filter sales">
+        <div><label for="university">Campus area</label><select id="university" disabled><option value="">All campuses</option></select></div>
+        <div><label for="city">City / town</label><select id="city" disabled><option value="">All cities</option></select></div>
+        <div><label for="year">Sale year</label><select id="year" disabled><option value="">All years</option></select></div>
+        <div><label for="distance">Distance to campus</label><select id="distance" disabled><option value="">Any distance</option><option value="1">Within 1 mile</option><option value="3">Within 3 miles</option><option value="5">Within 5 miles</option><option value="10">Within 10 miles</option></select></div>
+        <button type="button" id="reset" class="reset" disabled>Reset filters <span aria-hidden="true">↺</span></button>
+      </form>
+      <p id="load-status" role="status" aria-live="polite" class="filter-caption">Loading the collection…</p>
+      <noscript><p class="error">Please enable JavaScript to explore the data. The <a href="data/college_town_home_sales.csv">original CSV</a> and <a href="docs/data_description_sheet.md">data description</a> are available directly.</p></noscript>
+      <div id="dashboard" hidden>
+        <div class="metrics" aria-label="Summary statistics">
+          <article class="metric featured"><div class="metric-label">Median sale price <span aria-hidden="true">↗</span></div><strong id="median-price">—</strong><p id="price-note">Selected sales</p></article>
+          <article class="metric"><div class="metric-label">Recorded sales <span class="metric-symbol" aria-hidden="true">▥</span></div><strong id="sale-count">—</strong><p id="count-note">After the price rule</p></article>
+          <article class="metric"><div class="metric-label">Median price / sq ft <span class="metric-symbol" aria-hidden="true">⌑</span></div><strong id="median-ppsf">—</strong><p id="ppsf-note">Positive reported living area only</p></article>
+          <article class="metric"><div class="metric-label">Median days on market <span class="metric-symbol" aria-hidden="true">◷</span></div><strong id="median-dom">—</strong><p id="dom-note">Listing to contract</p></article>
+        </div>
+        <div id="empty-state" hidden class="empty-state"><h3>No sales match these filters.</h3><p>Try another sale year, city, or distance. Missing results are not zero-dollar sales.</p><button id="empty-reset" class="button">Reset filters</button></div>
+        <div id="charts" class="chart-grid">
+          <article class="panel city-panel"><div class="panel-heading"><div><p class="eyebrow muted">THE BIG PICTURE</p><h3>What does a home go for?</h3></div><span class="tag">Median price</span></div><p class="panel-description">Compare cities within your selection. Select a row to explore a city.</p><div class="chart-key"><span><i></i> Other cities</span><span><i class="illinois"></i> Champaign · Urbana · Savoy</span></div><div class="axis-label"><span>City / sale count</span><span>USD · bars start at $0</span></div><div id="city-chart" class="city-chart"></div><p class="panel-footnote">Medians describe the homes sold in this dataset, not the value of every home in a city.</p></article>
+          <div class="right-column">
+            <article class="panel distance-panel"><div class="panel-heading"><div><p class="eyebrow muted">THE CAMPUS CONNECTION</p><h3>How close is home?</h3></div><span class="circle-arrow" aria-hidden="true">↗</span></div><p class="panel-description">Median sale price by straight-line distance to the assigned campus.</p><div id="distance-chart" class="distance-chart"></div><p class="panel-footnote">Distances are not driving distances. Different homes, towns, and sale years can explain differences; this is not a campus price premium.</p></article>
+            <article class="insight"><p class="eyebrow">A NOTE FROM THE NUMBERS</p><h3 id="insight-title">Follow the local context.</h3><p id="insight-text"></p><a href="#methodology">Read the methodology <span aria-hidden="true">↗</span></a></article>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="sales" class="sales-section" aria-labelledby="sales-title" hidden>
+      <div class="section-heading"><div><p class="eyebrow muted">02 / BEHIND THE NUMBERS</p><h2 id="sales-title">Explore the individual sales.</h2></div><button id="download" class="button secondary">Download selection <span aria-hidden="true">↓</span></button></div>
+      <div class="panel table-panel"><div class="table-tools"><label class="search-label" for="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search street, city, ZIP or listing ID" aria-label="Search street, city, ZIP or listing ID"></label><div class="sort-control"><label for="sort">Sort by</label><select id="sort"><option value="recent">Most recent sale</option><option value="price-high">Price: high to low</option><option value="price-low">Price: low to high</option><option value="distance">Closest to campus</option></select></div></div>
+        <div class="table-scroll" role="region" aria-label="Sales table, scroll horizontally on smaller screens" tabindex="0"><table><caption class="sr-only">Completed home sales matching the current filters and text search. Each row is a listing, not necessarily a unique address.</caption><thead><tr><th scope="col">PROPERTY / LISTING ID</th><th scope="col">CITY</th><th scope="col">SALE DATE</th><th scope="col" class="numeric">SALE PRICE</th><th scope="col" class="numeric">SQ FT</th><th scope="col" class="numeric">TO CAMPUS</th></tr></thead><tbody id="sales-body"></tbody></table></div>
+        <div class="table-footer"><p id="table-status" role="status"></p><div class="pagination"><button id="previous" aria-label="Previous page">←</button><span id="page-status"></span><button id="next" aria-label="Next page">→</button></div></div>
+      </div><p class="export-note" id="export-status" role="status">Search affects the table and download only. Charts use the filters above.</p>
+    </section>
+    <section id="methodology" class="methodology" aria-labelledby="method-title"><div class="section-heading"><div><p class="eyebrow muted">03 / READ THE FINE PRINT</p><h2 id="method-title">Good questions start with honest data.</h2></div><a href="docs/data_description_sheet.md" class="text-link">Original data notes ↗</a></div><div class="method-grid"><article><span class="method-number">01</span><h3>A consistent price rule.</h3><p id="cleaning-note">All views include sales from $10,000 through $5,000,000, inclusive. Extreme prices are excluded, not replaced.</p></article><article><span class="method-number">02</span><h3>Missing means unknown.</h3><p>Days on market = contract date − list date. Both dates are required; same-day contracts count as 0. Price per square foot requires positive living area. Each metric shows its own sample size.</p></article><article><span class="method-number">03</span><h3>Context before conclusions.</h3><p id="coverage-note">This is a historical collection, not a current listing feed or a complete census of a housing market. Partial years and a changing mix of homes limit comparisons.</p></article></div>
+      <details><summary>More about the data, limitations, and calculations <span aria-hidden="true">+</span></summary><div class="detail-content"><p><strong>One listing, one record.</strong> We use listing_id as the key and retain repeated street addresses, which can represent different units or sales. ZIP codes and source identifiers stay as text.</p><p><strong>Property descriptions have limits.</strong> The reported home_type is unreliable, so we do not classify or filter homes with it. Lot size, taxes, and extreme bathroom counts also contain errors and are not used in the calculations.</p><p><strong>Metric definitions.</strong> The median is the middle value after sorting (the average of the two middle values for an even count). Median price per square foot is the median of individual sale_price / living_area_sqft ratios. Missing or zero living area is excluded only from that metric. Negative date intervals, if present, are excluded from days on market. Displayed dollar values are rounded to whole dollars after calculation.</p><p><strong>Coverage varies.</strong> Homes without listing or contract dates can differ systematically from homes with those dates. Days on market describes only the recorded subset. Groups with fewer than 30 observations are marked “small sample”; that is a display caution, not a statistical significance test. Unknown sale dates appear in “Unknown date” and in “All years.” No inflation adjustment is applied.</p><p><strong>Campus assignments.</strong> Each home is assigned to the nearest of the dataset's 11 campus landmarks using coordinates; a city's name does not define its campus. Distance groups are 0–1, over 1–3, over 3–5, over 5–10, and over 10 miles.</p><p><strong>Source.</strong> College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Collected March 2026 from public property listings. Values are as reported by the collection source and were not verified against county records.</p><p><a href="data/college_town_home_sales.csv">Download the original CSV</a> · <a href="AGENT_LOG.md">Codex session log</a> · <a href="README.md">Project README</a></p></div></details>
+    </section>
   </main>
-  <footer>
-    <p>Data: College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected March 2026.</p>
-  </footer>
+  <footer class="wrap site-footer"><span class="footer-brand">CampusAtlas <span> / </span> A little more context for a big decision.</span><span>BDI 475 · Built with Codex · 2026</span></footer>
 </body>
 </html>
