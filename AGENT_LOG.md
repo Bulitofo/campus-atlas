@@ -14,3 +14,13 @@
 - **Other correction:** The first attempt to replace the template page used an invalid combined delete/add patch. The editing tool rejected it without changes; the file replacement was then applied correctly.
 - **Human review status:** The user approved the concept. At the time of this entry, the local implementation had been checked by Codex; no claim is made that the user reviewed every calculation or line of code.
 - **Publication authorization:** The user replied “只发布，暂不提交 Canvas”. This authorizes the public GitHub repository and website publication; Canvas submission is intentionally deferred. Deployment verification will be recorded after publication.
+
+## 2026-11-09: Public release
+
+- **User authorization (exact reply):** “只发布，暂不提交 Canvas”
+- **Published:** https://bulitofo.github.io/campus-atlas/
+- **Repository:** https://github.com/Bulitofo/campus-atlas — public, generated from the course starter.
+- **Change history:** Implementation commit `f86c1e252d79cb745d300a4650da690363a9a2eb`, merged through [pull request #1](https://github.com/Bulitofo/campus-atlas/pull/1). The implementation commit is separate from the template's initial commit.
+- **Deployment:** [GitHub Pages workflow run 42566085697](https://github.com/Bulitofo/campus-atlas/actions/runs/42566085697) succeeded. The live URL is displayed in the repository's About section.
+- **Public verification:** Unauthenticated HTTP requests returned 200 for the HTML, JavaScript modules, stylesheet and derived JSON, with byte-for-byte matches to the checked local files. The browser loaded the full dataset and reproduced the Illinois filter results, without console errors.
+- **Submission status:** Canvas was not submitted, as requested.
