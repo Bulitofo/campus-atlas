@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {median,summarize,groupDistance,filterSales,csvText,searchSales} from '../core.mjs';
+assert.equal(median([null,0,12]),6);
+assert.equal(median([]),null);
+const base={listing_id:'001',address_street:'A, "quoted" home',city:'Example',state:'IL',zipcode:'00123',university:'Campus',sale_date:null,sale_price:100000,living_area_sqft:0,days_on_market:null};
+assert.deepEqual(summarize([base]),{count:1,price:100000,ppsf:null,ppsfCount:0,dom:null,domCount:0});
+assert.equal(summarize([{...base,days_on_market:0}]).dom,0);
+assert.equal(filterSales([base],{year:'Unknown'}).length,1);
+assert.equal(filterSales([base],{year:'2025'}).length,0);
+const boundaries=[0.2,1,1.1,3,3.1,5,5.1,10,10.1].map(miles_to_campus=>({...base,miles_to_campus}));
+assert.deepEqual(groupDistance(boundaries).map(b=>b.count),[2,2,2,2,1]);
+assert.equal(filterSales(boundaries,{distance:'1'}).length,2);
+assert.equal(searchSales([base],'00123').length,1);
+assert.ok(csvText([base]).includes('"A, ""quoted"" home"'));
+assert.ok(csvText([base]).includes('"00123"'));
+console.log('PASS: missing values, real zeroes, median, unknown dates, distance boundaries, search and CSV escaping.');

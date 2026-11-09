@@ -1,51 +1,59 @@
-# [Your site's title]
+# Campus Atlas
 
-## Start here (delete this section before you submit)
-
-This repository is your starting point for the Home Sales case. It already holds the dataset, its description sheet, project instructions for your AI coding agent, and outlines of the README and agent log that the case asks for.
-
-1. **Turn on GitHub Pages.** In this repository, open **Settings**, then **Pages**. Under "Build and deployment," set **Source** to **GitHub Actions**. GitHub may suggest workflows to add. Skip them: this repository already has one, `.github/workflows/pages.yml`.
-2. **Publish for the first time.** Open the **Actions** tab, choose **Publish site to GitHub Pages** in the sidebar, click **Run workflow**, then click **Run workflow** again to confirm. If the tab already shows a failed run from when you created the repository, that's expected: Pages wasn't turned on yet. When the new run shows a green check, your site is at `https://your-username.github.io/your-repo-name/`. It shows a placeholder page until you replace `index.html`.
-
-    From then on, every push to the main branch publishes the site within a few minutes. If the live site doesn't show a change, open the **Actions** tab. A red X means the publish failed, and the run's log says why.
-3. **Open the repository in your AI coding agent.** Its project instructions are in `AGENTS.md`. If your agent reads its instructions from a file with a different name, check its documentation and copy `AGENTS.md` to that name. Add to the instructions as you learn what your agent needs.
-4. **Read `docs/data_description_sheet.md`** before you ask the agent for any analysis.
-5. **Build in small steps,** as the setup guide describes. Add an entry to `AGENT_LOG.md` each time you work with the agent.
-6. **Fill in every section below** before you submit.
-
-| Path | What it is |
-|---|---|
-| `index.html` | A placeholder page. Replace it with your site. |
-| `data/college_town_home_sales.csv` | The dataset, version 1.0: 35,442 rows. Your site reads this file. |
-| `data/college_town_home_sales.xlsx`, `.sqlite`, `.duckdb`, `.parquet` | The same data in Excel, SQLite, DuckDB and Parquet formats, with identical values |
-| `docs/data_description_sheet.md` | What every column means, and five problems in the data |
-| `AGENTS.md` | Project instructions for your AI coding agent |
-| `AGENT_LOG.md` | Your agent log |
-| `scripts/` | Scripts that make smaller data files for the site |
-| `.github/workflows/pages.yml` | Publishes the site to GitHub Pages each time you push to main. It publishes your files as they are. If you switch to a framework that needs a build step, have your agent update it. |
-
-Don't edit any of the five dataset files. Your site needs only the CSV file. The other formats make it easier to check numbers a second way, for example with a pivot table in Excel or a SQL query on the SQLite file. In SQLite and DuckDB, the table is named `home_sales`.
+An interactive guide to historical home sales around 11 US university campuses, built for the BDI 475 Website Project.
 
 ## What this site is for
 
-_Replace this line with your site's question and audience, or a short description of the site._
+Campus Atlas helps a reader compare the homes that sold in different college towns. Filter by campus, city, sale year, or distance to campus. The site shows median prices, sale counts, median price per square foot, and median days on market. City and distance charts include sample sizes. The sales table supports search, sorting, pagination, and a CSV export of the complete filtered selection.
+
+The Illinois shortcut selects the campus area assigned to the University of Illinois Urbana-Champaign. Selecting a city bar narrows the analysis. Filters are recorded in the URL, so reloading or sharing that URL preserves the selection. Table search and sort are separate from chart filters.
 
 ## Live site
 
-https://your-username.github.io/your-repo-name/
+Website: https://bulitofo.github.io/campus-atlas/
+
+Repository: https://github.com/Bulitofo/campus-atlas
+
+The GitHub Pages workflow publishes the latest version from `main`. Canvas submission is deferred at the user's request.
 
 ## Data notes
 
-_Replace this line. Say which rows you left out and why, and how each figure on the site is defined. "Five things that will bite you" in the description sheet lists the problems to cover._
+- **Price rule:** Include $10,000 through $5,000,000, inclusive. This excludes 40 low-price and 31 high-price records from 35,442 source sales, leaving 35,371. The same rule applies to all charts, cards, the table, and the filtered export.
+- **Dates:** Recorded sale dates span March 27, 2023 to March 25, 2026. Both endpoint years are partial. Six included records have no sale date and appear under “Unknown date” or “All years.” These are nominal sale prices, without inflation adjustment.
+- **Median price:** Median of individual sale prices in the current selection. An even-sized sample uses the mean of the two middle values. Displayed dollar amounts are rounded only after calculation.
+- **Price per square foot:** Median of each sale's price divided by positive reported living area. Blank or zero area is excluded only from this metric. The full included sample has 34,871 eligible area records.
+- **Days on market:** Contract date minus list date, using records with both dates and a nonnegative interval. A real zero-day interval is retained; a missing date remains unknown. This metric has 28,028 eligible records in the full sample. Missing dates are not random, so the result describes that subset.
+- **Repeated addresses:** Listing IDs are the keys. We do not deduplicate by street address. Different units in a building can share an address. ZIP codes and original source identifiers are handled as text.
+- **Campus distance:** Use the supplied nearest-campus assignment and straight-line distance, not driving distance. Groups are 0–1, over 1–3, over 3–5, over 5–10, and over 10 miles. Distances are not a causal explanation of prices.
+- **Unreliable attributes:** No analysis depends on `home_type`, lot size, annual taxes, or bathroom outliers. The source description documents problems in those fields.
+- **Small samples:** City and distance groups with 1–29 sales are marked as small samples. This is a readability caution, not a significance test.
+- **Coverage:** The collection is historical and is not a complete market census. Values are as reported by the collection source, not independently checked against county records. Differences in property mix and sale dates affect comparisons.
+
+The five `data/college_town_home_sales.*` source files are unchanged. `data/explorer_data.json` is a compact derivative generated by `scripts/prepare_data.py`. It keeps the fields used by the website and is committed so GitHub Pages needs no build step.
 
 ## Tools we used
 
-_Replace this line with your AI coding agent or agents, and any libraries and other tools you used._
+OpenAI Codex, plain HTML, CSS, JavaScript modules, Python's standard library, and SQLite. Charts are local HTML/CSS elements with visible values and sample sizes. There are no external script, font, chart, or analytics dependencies. The original GitHub Pages workflow serves the repository root, and all asset URLs are relative.
+
+The AI session and checks are recorded in [AGENT_LOG.md](AGENT_LOG.md). Codex produced the implementation and performed the automated/browser checks; those checks are not represented as independent human review.
+
+## Reproduce and check
+
+```sh
+python3 scripts/prepare_data.py
+python3 scripts/verify_data.py
+node scripts/verify_core.mjs
+python3 -m http.server 8765
+```
+
+The verification compares 60 selections × 6 metrics in the browser calculation module against an independent read of the original SQLite file. It also verifies hashes of all five original datasets and tests missing values, zero-day contracts, distance boundaries, CSV escaping, and search.
+
+Local browser checks cover the Illinois shortcut, combined filters, empty selections, unknown dates, sorting, pagination, repeated addresses, export, and a 390-pixel phone layout. The downloaded CSV was read back and checked against the 10 selected listings.
 
 ## Citation
 
 College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected March 2026.
 
-## Who did what
+Starter: https://github.com/uidfc-business-emerging-technologies/campustown-home-sales-starter
 
-_For teams: replace this line with each member's name and what they did. If you worked alone, delete this section._
+Data documentation: [docs/data_description_sheet.md](docs/data_description_sheet.md)
